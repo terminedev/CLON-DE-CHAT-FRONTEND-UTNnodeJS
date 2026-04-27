@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUser } from '../api/api.js';
+import { createUser, deleteUser } from '../api/api.js'; // Importamos deleteUser
 
 function Login({ allUsers, setCurrentUser, reloadUsers }) {
     const [newUsername, setNewUsername] = useState('');
@@ -23,6 +23,26 @@ function Login({ allUsers, setCurrentUser, reloadUsers }) {
         }
     };
 
+    // NUEVA FUNCIÓN: Manejar la eliminación del usuario
+    const handleDeleteUser = async () => {
+        if (!selectedUserId) {
+            alert("Por favor, selecciona un usuario de la lista primero.");
+            return;
+        }
+
+        const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este usuario?");
+        if (confirmDelete) {
+            try {
+                await deleteUser(selectedUserId);
+                setSelectedUserId(''); // Limpiar la selección
+                reloadUsers(); // Refrescar lista global para que desaparezca
+                alert("Usuario eliminado con éxito.");
+            } catch (error) {
+                alert("Error al eliminar el usuario: " + error.message);
+            }
+        }
+    };
+
     return (
         <div className="app-container login-screen">
             <div className="login-box">
@@ -33,10 +53,21 @@ function Login({ allUsers, setCurrentUser, reloadUsers }) {
                         <option value="" disabled>Selecciona un usuario existente</option>
                         {allUsers.map(u => <option key={u._id} value={u._id}>{u.username} ({u.email})</option>)}
                     </select>
-                    <button type="submit">Ingresar</button>
+
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <button type="submit" style={{ flex: 1 }}>Ingresar</button>
+                        {/* NUEVO BOTÓN: Eliminar usuario */}
+                        <button
+                            type="button"
+                            onClick={handleDeleteUser}
+                            style={{ flex: 1, background: '#dc3545', color: 'white' }}
+                        >
+                            Eliminar
+                        </button>
+                    </div>
                 </form>
 
-                <hr style={{ margin: '10px 0' }} />
+                <hr style={{ margin: '15px 0' }} />
 
                 <h3>O crea uno nuevo</h3>
                 <form onSubmit={handleCreateUser} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

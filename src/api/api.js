@@ -22,6 +22,7 @@ export const apiCall = async (endpoint, method = 'GET', body = null) => {
 // Endpoints de Usuarios
 export const getUsers = () => apiCall('/users');
 export const createUser = (username, email) => apiCall('/users', 'POST', { username, email });
+export const deleteUser = (userId) => apiCall(`/users/${userId}`, 'DELETE')
 
 // Endpoints de Chats
 export const getUserChats = (userId) => apiCall(`/chats/${userId}`);
